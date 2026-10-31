@@ -232,3 +232,25 @@ do $$ declare n int; begin
   perform pg_temp.check('the escalation attempts left no admin role behind', n = 0);
 end $$;
 reset role;
+
+-- Notices: a new decision counts as unseen until the person opens the notices screen.
+insert into public.moderation_actions (subject_user_id, action, reason, actor_id) values
+  ('00000000-0000-0000-0000-00000000005f', 'warn', 'Warned about spam messages', '00000000-0000-0000-0000-000000000050'),
+  ('00000000-0000-0000-0000-00000000005f', 'dismiss', 'Report did not meet our rules', '00000000-0000-0000-0000-000000000050');
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000005f', false);
+do $$ declare n int; begin
+  select public.count_unseen_notices() into n;
+  perform pg_temp.check('a new decision is counted as unseen, dismissals are not', n = 1);
+end $$;
+select public.mark_notices_seen();
+do $$ declare n int; begin
+  select public.count_unseen_notices() into n;
+  perform pg_temp.check('opening notices clears the unseen count', n = 0);
+end $$;
+do $$ declare n int; begin
+  begin insert into public.notice_reads (user_id) values ('00000000-0000-0000-0000-00000000005f');
+    perform pg_temp.check('clients cannot write notice reads directly', false);
+  exception when insufficient_privilege then perform pg_temp.check('clients cannot write notice reads directly', true); end;
+end $$;
+reset role;

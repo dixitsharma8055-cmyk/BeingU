@@ -4,7 +4,7 @@ import { Stack, useFocusEffect } from 'expo-router';
 import { Button } from '@/components/Button';
 import { TextField } from '@/components/TextField';
 import { colors, radius, spacing } from '@/constants/theme';
-import { appealDecision, fetchMyNotices, type Notice } from '@/lib/safety';
+import { appealDecision, fetchMyNotices, markNoticesSeen, type Notice } from '@/lib/safety';
 import { ACTION_LABELS, APPEAL_MAX, APPEAL_MIN, canAppeal, describeUntil } from '@/lib/safetyRules';
 import { supabase } from '@/lib/supabase';
 
@@ -29,6 +29,8 @@ export default function NoticesScreen() {
       const { data } = await supabase.auth.getUser();
       if (!data.user) return;
       setNotices(await fetchMyNotices(data.user.id));
+      // Opening this screen counts as seeing the decisions, so the badge on your profile clears.
+      markNoticesSeen().catch(() => undefined);
     } catch {
       setFailed(true);
     }

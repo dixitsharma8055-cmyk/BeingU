@@ -292,6 +292,48 @@ exception
 end;
 $$;
 
+-- In-app notices: how many decisions about my account I have not opened yet.
+create table public.notice_reads (
+  user_id uuid primary key references public.profiles (id) on delete cascade,
+  seen_at timestamptz not null default now()
+);
+alter table public.notice_reads enable row level security;
+revoke all on public.notice_reads from anon, authenticated;
+grant select on public.notice_reads to authenticated;
+create policy "notice_reads: read own" on public.notice_reads for select to authenticated
+  using (user_id = (select auth.uid()));
+
+create or replace function public.count_unseen_notices()
+returns integer
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*)::integer
+  from public.moderation_actions a
+  where a.subject_user_id = (select auth.uid())
+    and a.action <> 'dismiss'
+    and a.created_at > coalesce(
+      (select r.seen_at from public.notice_reads r where r.user_id = (select auth.uid())),
+      '-infinity'::timestamptz);
+$$;
+
+create or replace function public.mark_notices_seen()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := (select auth.uid());
+begin
+  if uid is null then raise exception 'You need to be signed in'; end if;
+  insert into public.notice_reads (user_id, seen_at) values (uid, now())
+  on conflict (user_id) do update set seen_at = excluded.seen_at;
+end;
+$$;
+
 -- Names of the people I have blocked. Their profiles are hidden from me, so this returns just what the list needs.
 create or replace function public.list_my_blocks()
 returns table (user_id uuid, username text, display_name text, blocked_at timestamptz)
@@ -458,8 +500,8 @@ grant execute on function public.blocked_either_way(uuid, uuid), public.account_
 revoke all on function public.block_user(uuid), public.unblock_user(uuid),
   public.submit_report(text, uuid, text, text, text), public.submit_appeal(uuid, text),
   public.admin_review_report(uuid, text, text, timestamptz), public.admin_decide_appeal(uuid, boolean),
-  public.admin_grant_role(uuid, text), public.list_my_blocks() from public, anon;
+  public.admin_grant_role(uuid, text), public.list_my_blocks(), public.count_unseen_notices(), public.mark_notices_seen() from public, anon;
 grant execute on function public.block_user(uuid), public.unblock_user(uuid),
   public.submit_report(text, uuid, text, text, text), public.submit_appeal(uuid, text),
   public.admin_review_report(uuid, text, text, timestamptz), public.admin_decide_appeal(uuid, boolean),
-  public.admin_grant_role(uuid, text), public.list_my_blocks() to authenticated;
+  public.admin_grant_role(uuid, text), public.list_my_blocks(), public.count_unseen_notices(), public.mark_notices_seen() to authenticated;

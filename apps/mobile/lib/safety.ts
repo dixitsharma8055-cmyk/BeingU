@@ -68,3 +68,15 @@ export async function appealDecision(actionId: string, message: string): Promise
   const { error } = await supabase.rpc('submit_appeal', { p_action_id: actionId, p_message: parsed.message });
   if (error) throw error;
 }
+
+// How many decisions about my account I have not opened yet. Failing quietly is fine: it only drives a count.
+export async function countUnseenNotices(): Promise<number> {
+  const { data, error } = await supabase.rpc('count_unseen_notices');
+  if (error) return 0;
+  return typeof data === 'number' ? data : 0;
+}
+
+export async function markNoticesSeen(): Promise<void> {
+  const { error } = await supabase.rpc('mark_notices_seen');
+  if (error) throw error;
+}

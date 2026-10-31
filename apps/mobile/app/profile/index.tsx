@@ -6,6 +6,7 @@ import { InterestBadge } from '@/components/InterestBadge';
 import { colors, spacing } from '@/constants/theme';
 import { splitForProfile, type PickedInterest } from '@/lib/interestRules';
 import { fetchMyInterests } from '@/lib/interests';
+import { countUnseenNotices } from '@/lib/safety';
 import { fetchMyProfile, type MyProfile } from '@/lib/profileData';
 import { setMyVisibility } from '@/lib/discover';
 import { supabase } from '@/lib/supabase';
@@ -14,7 +15,7 @@ type State =
   | { status: 'loading' }
   | { status: 'signed-out' }
   | { status: 'error' }
-  | { status: 'ready'; profile: MyProfile | null; picks: PickedInterest[] };
+  | { status: 'ready'; profile: MyProfile | null; picks: PickedInterest[]; unseenNotices: number };
 
 // The signed-in user's own profile: name, username, bio, state and interest badges.
 export default function MyProfileScreen() {
@@ -27,11 +28,12 @@ export default function MyProfileScreen() {
         setState({ status: 'signed-out' });
         return;
       }
-      const [profile, picks] = await Promise.all([
+      const [profile, picks, unseenNotices] = await Promise.all([
         fetchMyProfile(userData.user.id),
         fetchMyInterests(userData.user.id),
+        countUnseenNotices(),
       ]);
-      setState({ status: 'ready', profile, picks });
+      setState({ status: 'ready', profile, picks, unseenNotices });
     } catch {
       setState({ status: 'error' });
     }
@@ -64,7 +66,7 @@ export default function MyProfileScreen() {
     );
   }
 
-  const { profile, picks } = state;
+  const { profile, picks, unseenNotices } = state;
   if (!profile) {
     return (
       <View style={styles.center}>
@@ -127,7 +129,11 @@ export default function MyProfileScreen() {
 
       <Button label="Discover people" variant="secondary" onPress={() => router.push('/discover')} />
       <Button label="Blocked people" variant="secondary" onPress={() => router.push('/blocked')} />
-      <Button label="Notices about my account" variant="secondary" onPress={() => router.push('/notices')} />
+      <Button
+        label={unseenNotices > 0 ? `Notices about my account (${unseenNotices} new)` : 'Notices about my account'}
+        variant="secondary"
+        onPress={() => router.push('/notices')}
+      />
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
