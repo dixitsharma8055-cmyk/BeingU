@@ -199,3 +199,36 @@ update public.account_status set until = now() - interval '1 day' where user_id 
 do $$ begin
   perform pg_temp.check('an expired suspension no longer restricts the account', not public.account_restricted('00000000-0000-0000-0000-000000000054'));
 end $$;
+
+-- Attack checks: an ordinary signed-in person tries to change safety data directly.
+insert into auth.users (id) values ('00000000-0000-0000-0000-00000000005f');
+insert into public.profiles (id, username, display_name, date_of_birth, profile_visibility) values
+  ('00000000-0000-0000-0000-00000000005f', 'sf_attacker', 'Attacker', '1990-01-01', 'public');
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000005f', false);
+do $$ begin
+  begin insert into public.admin_roles (user_id, role) values ('00000000-0000-0000-0000-00000000005f', 'admin');
+    perform pg_temp.check('an ordinary person cannot make themselves an admin', false);
+  exception when insufficient_privilege then perform pg_temp.check('an ordinary person cannot make themselves an admin', true); end;
+  begin update public.account_status set status = 'active';
+    perform pg_temp.check('an ordinary person cannot change account status', false);
+  exception when insufficient_privilege then perform pg_temp.check('an ordinary person cannot change account status', true); end;
+  begin insert into public.moderation_actions (subject_user_id, action, reason) values
+      ('00000000-0000-0000-0000-00000000005f', 'warn', 'Forged warning from the client');
+    perform pg_temp.check('an ordinary person cannot forge a moderation decision', false);
+  exception when insufficient_privilege then perform pg_temp.check('an ordinary person cannot forge a moderation decision', true); end;
+  begin update public.reports set status = 'dismissed';
+    perform pg_temp.check('an ordinary person cannot change a report', false);
+  exception when insufficient_privilege then perform pg_temp.check('an ordinary person cannot change a report', true); end;
+  begin delete from public.audit_log;
+    perform pg_temp.check('an ordinary person cannot erase the audit log', false);
+  exception when insufficient_privilege then perform pg_temp.check('an ordinary person cannot erase the audit log', true); end;
+  begin perform public.admin_grant_role('00000000-0000-0000-0000-00000000005f', 'admin');
+    perform pg_temp.check('an ordinary person cannot call the role function to escalate', false);
+  exception when others then perform pg_temp.check('an ordinary person cannot call the role function to escalate', sqlerrm like '%Not allowed%'); end;
+end $$;
+do $$ declare n int; begin
+  select count(*) into n from public.admin_roles where user_id = '00000000-0000-0000-0000-00000000005f';
+  perform pg_temp.check('the escalation attempts left no admin role behind', n = 0);
+end $$;
+reset role;
