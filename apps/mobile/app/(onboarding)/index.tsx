@@ -5,44 +5,60 @@ import { Button } from '@/components/Button';
 import { colors, spacing } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
-// Entry point for onboarding: sends the user to the profile step until it is saved,
-// then shows what comes next. Interests are the next step to build.
+type Stage = 'loading' | 'needs-profile' | 'needs-interests' | 'done';
+
+// Onboarding entry point. It works out where the user is and offers the next step.
+// It never forces the interests step, so "Finish later" really means later.
 export default function OnboardingHome() {
-  const [checking, setChecking] = useState(true);
-  const [hasProfile, setHasProfile] = useState(false);
+  const [stage, setStage] = useState<Stage>('loading');
 
   useEffect(() => {
     let active = true;
     (async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
-        if (active) setChecking(false);
+        if (active) setStage('done');
         return;
       }
-      const { data } = await supabase.from('profiles').select('id').eq('id', userData.user.id).maybeSingle();
-      if (active) {
-        setHasProfile(!!data);
-        setChecking(false);
-      }
+      const uid = userData.user.id;
+      const [profile, interests] = await Promise.all([
+        supabase.from('profiles').select('id').eq('id', uid).maybeSingle(),
+        supabase.from('user_interests').select('interest_id', { count: 'exact', head: true }).eq('user_id', uid),
+      ]);
+      if (!active) return;
+      if (!profile.data) setStage('needs-profile');
+      else if ((interests.count ?? 0) === 0) setStage('needs-interests');
+      else setStage('done');
     })();
     return () => {
       active = false;
     };
   }, []);
 
-  if (checking) {
+  if (stage === 'loading') {
     return (
       <View style={styles.container}>
         <ActivityIndicator color={colors.purple} />
       </View>
     );
   }
-  if (!hasProfile) return <Redirect href="/(onboarding)/profile" />;
+  if (stage === 'needs-profile') return <Redirect href="/(onboarding)/profile" />;
+
+  if (stage === 'needs-interests') {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.heading}>Almost there</Text>
+        <Text style={styles.body}>Choose a few interests so we can find people and communities for you.</Text>
+        <Button label="Choose interests" onPress={() => router.push('/(onboarding)/interests')} />
+        <Button label="Later" variant="secondary" onPress={() => router.replace('/welcome')} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Profile saved</Text>
-      <Text style={styles.body}>Next: choose your interests. That step is still being built.</Text>
+      <Text style={styles.heading}>You're all set</Text>
+      <Text style={styles.body}>Your feed and communities are the next things to build.</Text>
       <Button label="Back to welcome" variant="secondary" onPress={() => router.replace('/welcome')} />
     </View>
   );

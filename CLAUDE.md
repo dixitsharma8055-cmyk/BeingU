@@ -79,6 +79,11 @@
 - [ ] Supabase phone provider with an SMS provider configured (costs money; founder approval needed).
 - [ ] DLT registration for OTP SMS in India (required by TRAI for SMS to Indian numbers).
 - [ ] Terms, Privacy Policy and Community Guidelines documents (checkboxes currently link to nothing).
-- [ ] Onboarding, profile, interest library.
+- [x] Onboarding profile step (name, username, date of birth, bio, state). Code written; checks passing offline.
+- [x] Interest library: 520 interests in 26 categories, generated from `supabase/data/interests.json` (migration 0002).
+- [x] Interest selection: search, category filter, 3–20 limit, skill level, favourite, want-to-learn, custom interests (unapproved until reviewed). Migration 0003 saves all-or-nothing.
+- [x] Database security tests (23 checks) pass on a local PostgreSQL 16 with a Supabase stub: `supabase/tests/run_local.sh`.
+- [ ] Interests are NOT yet shown on profiles; photo upload and city selection are not built.
+- [ ] Hindi names for interests and categories are empty (`name_hi` null); translation pending.
 - [ ] City list import.
 - [ ] Hindi translations.

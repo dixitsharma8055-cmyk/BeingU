@@ -75,7 +75,7 @@ export default function ProfileOnboarding() {
       }
       return;
     }
-    router.replace('/(onboarding)');
+    router.replace('/(onboarding)/interests');
   }
 
   return (
