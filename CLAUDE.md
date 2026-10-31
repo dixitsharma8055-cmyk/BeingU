@@ -73,8 +73,20 @@
 - [x] Foundation migration with RLS (`supabase/migrations/0001_foundation.sql`), NOT applied.
 - [x] Seed: 28 states and 8 union territories (`supabase/seed.sql`), NOT applied.
 - [ ] Install dependencies and run TypeScript check (blocked: npm registry unreachable from this workspace).
-- [ ] Automated tests for env validation and the 18+ rule.
-- [ ] Phone (+91) sign-up and log-in with OTP.
-- [ ] Onboarding, profile, interest library.
+- [x] Phone (+91) sign-up/log-in with one-time code: phone entry, code entry, 18+ and terms consent (`apps/mobile/app/(auth)/`). Code written; NOT yet run on a device or against Supabase.
+- [x] Phone and age logic checked offline (19 checks passing, using a stand-in for zod). Jest test file written in `apps/mobile/__tests__/` but NOT run.
+- [ ] Install dependencies, run `npm test` and `npm run typecheck`.
+- [ ] Supabase phone provider with an SMS provider configured (costs money; founder approval needed).
+- [ ] DLT registration for OTP SMS in India (required by TRAI for SMS to Indian numbers).
+- [ ] Counsel review of the legal documents and filling of all placeholders (launch blocker).
+- [x] Onboarding profile step (name, username, date of birth, bio, state). Code written; checks passing offline.
+- [x] Interest library: 520 interests in 26 categories, generated from `supabase/data/interests.json` (migration 0002).
+- [x] Interest selection: search, category filter, 3–20 limit, skill level, favourite, want-to-learn, custom interests (unapproved until reviewed). Migration 0003 saves all-or-nothing.
+- [x] Database security tests (23 checks) pass on a local PostgreSQL 16 with a Supabase stub: `supabase/tests/run_local.sh`.
+- [x] Terms, Privacy Policy and Community Guidelines drafted (`apps/mobile/legal/content.ts`), shown in-app with a draft banner. NOT reviewed by counsel; see `docs/legal/README.md` for the placeholders to fill.
+- [x] Own profile screen (`apps/mobile/app/profile/`) shows interest badges, favourites first, and a 'want to learn' section. Editing interests returns to the profile.
+- [ ] Interest badges are not tappable yet: interest pages come with discovery.
+- [ ] Other users' profiles, profile photo and city selection are not built.
+- [ ] Hindi names for interests and categories are empty (`name_hi` null); translation pending.
 - [ ] City list import.
 - [ ] Hindi translations.
