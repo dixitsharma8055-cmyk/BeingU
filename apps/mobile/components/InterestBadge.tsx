@@ -1,19 +1,33 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors, radius } from '@/constants/theme';
 import type { PickedInterest } from '@/lib/interestRules';
 
-// A read-only interest badge for profiles. It is not tappable yet: interest pages arrive with discovery.
-export function InterestBadge({ interest }: { interest: PickedInterest }) {
-  return (
-    <View
-      accessible
-      accessibilityLabel={`${interest.name}, ${interest.skill}${interest.favorite ? ', favourite' : ''}`}
-      style={[styles.badge, interest.favorite && styles.favorite]}
-    >
+// An interest badge on a profile. When onPress is given it opens that interest's page.
+export function InterestBadge({ interest, onPress }: { interest: PickedInterest; onPress?: () => void }) {
+  const label = `${interest.name}, ${interest.skill}${interest.favorite ? ', favourite' : ''}`;
+  const content = (
+    <>
       {interest.favorite ? <Text style={styles.star}>★</Text> : null}
       <Text style={[styles.name, interest.favorite && styles.favoriteText]}>{interest.name}</Text>
       <Text style={styles.skill}>{interest.skill}</Text>
-    </View>
+    </>
+  );
+  if (!onPress) {
+    return (
+      <View accessible accessibilityLabel={label} style={[styles.badge, interest.favorite && styles.favorite]}>
+        {content}
+      </View>
+    );
+  }
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${label}. Open ${interest.name}`}
+      onPress={onPress}
+      style={({ pressed }) => [styles.badge, interest.favorite && styles.favorite, pressed && styles.pressed]}
+    >
+      {content}
+    </Pressable>
   );
 }
 
@@ -34,4 +48,5 @@ const styles = StyleSheet.create({
   name: { fontSize: 14, color: colors.ink, fontWeight: '600' },
   favoriteText: { color: colors.white },
   skill: { fontSize: 11, color: colors.inkMuted, textTransform: 'capitalize' },
+  pressed: { opacity: 0.8 },
 });

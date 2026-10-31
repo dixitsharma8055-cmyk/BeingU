@@ -100,7 +100,7 @@ export default function MyProfileScreen() {
         ) : (
           <View style={styles.badges}>
             {has.map((p) => (
-              <InterestBadge key={p.id} interest={p} />
+              <InterestBadge key={p.id} interest={p} onPress={p.slug ? () => router.push(`/interest/${p.slug}`) : undefined} />
             ))}
           </View>
         )}
@@ -111,7 +111,7 @@ export default function MyProfileScreen() {
           <Text style={styles.sectionTitle}>Want to learn</Text>
           <View style={styles.badges}>
             {learning.map((p) => (
-              <InterestBadge key={p.id} interest={p} />
+              <InterestBadge key={p.id} interest={p} onPress={p.slug ? () => router.push(`/interest/${p.slug}`) : undefined} />
             ))}
           </View>
         </View>

@@ -11,6 +11,7 @@ export const SKILL_LEVELS: SkillLevel[] = ['beginner', 'intermediate', 'advanced
 
 export type PickedInterest = {
   id: string;
+  slug?: string;
   name: string;
   skill: SkillLevel;
   favorite: boolean;

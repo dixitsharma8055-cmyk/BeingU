@@ -26,19 +26,20 @@ export async function fetchLibrary(): Promise<{ categories: Category[]; interest
 export async function fetchMyInterests(userId: string): Promise<PickedInterest[]> {
   const { data, error } = await supabase
     .from('user_interests')
-    .select('skill_level, is_favorite, wants_to_learn, interests(id, name_en)')
+    .select('skill_level, is_favorite, wants_to_learn, interests(id, slug, name_en)')
     .eq('user_id', userId);
   if (error) throw error;
   type Row = {
     skill_level: SkillLevel;
     is_favorite: boolean;
     wants_to_learn: boolean;
-    interests: { id: string; name_en: string } | null;
+    interests: { id: string; slug: string; name_en: string } | null;
   };
   return ((data ?? []) as unknown as Row[])
     .filter((r) => r.interests !== null)
     .map((r) => ({
       id: r.interests!.id,
+      slug: r.interests!.slug,
       name: r.interests!.name_en,
       skill: r.skill_level,
       favorite: r.is_favorite,
