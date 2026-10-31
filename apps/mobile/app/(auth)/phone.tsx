@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { BrandLogo } from '@/components/BrandLogo';
 import { Button } from '@/components/Button';
@@ -74,6 +74,17 @@ export default function PhoneScreen() {
           <Checkbox checked={acceptedTerms} onChange={setAcceptedTerms}>
             I agree to the Terms and Conditions and the Privacy Policy.
           </Checkbox>
+          <View style={styles.links}>
+            <Pressable accessibilityRole="link" accessibilityLabel="Read the Terms and Conditions" onPress={() => router.push('/legal/terms')}>
+              <Text style={styles.link}>Read Terms</Text>
+            </Pressable>
+            <Pressable accessibilityRole="link" accessibilityLabel="Read the Privacy Policy" onPress={() => router.push('/legal/privacy')}>
+              <Text style={styles.link}>Read Privacy Policy</Text>
+            </Pressable>
+            <Pressable accessibilityRole="link" accessibilityLabel="Read the Community Guidelines" onPress={() => router.push('/legal/community')}>
+              <Text style={styles.link}>Community Guidelines</Text>
+            </Pressable>
+          </View>
         </View>
 
         <Button label="Send code" onPress={sendCode} disabled={!canContinue} loading={sending} />
@@ -89,4 +100,6 @@ const styles = StyleSheet.create({
   heading: { fontSize: 26, fontWeight: '700', color: colors.ink },
   body: { fontSize: 16, color: colors.inkMuted, lineHeight: 22 },
   consents: { gap: spacing.md, marginTop: spacing.sm },
+  links: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginLeft: 30 },
+  link: { fontSize: 14, color: colors.purple, fontWeight: '600', textDecorationLine: 'underline' },
 });
