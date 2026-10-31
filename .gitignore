@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Secrets — never commit real keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+supabase/.branches
+supabase/.temp
+
+# Expo / React Native
+.expo/
+dist/
+web-build/
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+*.orig.*
+
+# Build & logs
+npm-debug.log*
+yarn-error.log*
+*.log
+coverage/
+.next/
+out/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Misc
+.cache/
+tmp/
