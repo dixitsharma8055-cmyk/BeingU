@@ -3,7 +3,11 @@
 // (see docs/legal/README.md). Not legal advice on its own.
 
 export type LegalSection = { heading: string; paragraphs: string[] };
-export type LegalDoc = { slug: 'terms' | 'privacy' | 'community'; title: string; sections: LegalSection[] };
+export type LegalDoc = {
+  slug: 'terms' | 'privacy' | 'community' | 'moderation' | 'deletion' | 'advertising';
+  title: string;
+  sections: LegalSection[];
+};
 
 export const LAST_UPDATED = '[DATE OF PUBLICATION]';
 export const COMPANY = '[COMPANY LEGAL NAME]';
@@ -222,7 +226,161 @@ export const communityDoc: LegalDoc = {
   ],
 };
 
-export const LEGAL_DOCS: LegalDoc[] = [termsDoc, privacyDoc, communityDoc];
+export const moderationDoc: LegalDoc = {
+  slug: 'moderation',
+  title: 'Content Moderation Policy',
+  sections: [
+    {
+      heading: '1. Purpose',
+      paragraphs: [
+        'This policy explains how BeingU reviews reported content and accounts, what actions we may take, and how you can respond. It applies together with the Community Guidelines and Terms.',
+      ],
+    },
+    {
+      heading: '2. How content comes to our attention',
+      paragraphs: [
+        'Users report posts, comments, messages, communities, and profiles from inside the app. We may also review content that our automated checks flag, such as spam or abusive patterns. Automated checks only prioritise review; a person makes decisions on serious matters.',
+      ],
+    },
+    {
+      heading: '3. Report categories',
+      paragraphs: [
+        'Harassment, bullying, impersonation, spam, inappropriate content, scams, or other. When you report, choose the closest category and, where helpful, add details and evidence. Evidence is kept only for the review and any appeal.',
+      ],
+    },
+    {
+      heading: '4. Reviewing reports',
+      paragraphs: [
+        'Reports are reviewed by trained moderators in order of seriousness. Reports involving child sexual abuse material, credible threats of violence, or self-harm are escalated at once and handled under the law. [COUNSEL TO CONFIRM: escalation route and reporting duties for these categories.]',
+      ],
+    },
+    {
+      heading: '5. Possible actions',
+      paragraphs: [
+        'Depending on the seriousness and history, we may: dismiss the report; ask for the content to be changed; remove content; issue a warning; limit features for a period (restrict); suspend the account for a set period; or permanently ban the account.',
+      ],
+    },
+    {
+      heading: '6. Telling you about decisions',
+      paragraphs: [
+        'When we act against your content or account, we tell you in the app what was done and why, unless the law or a safety reason prevents it. The notice explains how to appeal.',
+      ],
+    },
+    {
+      heading: '7. Appeals',
+      paragraphs: [
+        'You can appeal most actions within [COUNSEL TO SET APPEAL WINDOW] days by sending a short explanation in the app. A different moderator reviews your appeal. We tell you the outcome and the reasons.',
+      ],
+    },
+    {
+      heading: '8. Records',
+      paragraphs: [
+        'We keep a record of reports, decisions and appeals so that actions are consistent and can be audited. Access to these records is limited to authorised staff. [COUNSEL TO SET RETENTION PERIOD FOR MODERATION RECORDS.]',
+      ],
+    },
+    {
+      heading: '9. Government and legal requests',
+      paragraphs: [
+        'We respond to lawful orders from competent authorities. [COUNSEL TO CONFIRM: the grievance and takedown timelines that apply to BeingU under the IT Rules, 2021 (as amended).]',
+      ],
+    },
+  ],
+};
+
+export const deletionDoc: LegalDoc = {
+  slug: 'deletion',
+  title: 'Account Deletion Policy',
+  sections: [
+    {
+      heading: '1. How to delete your account',
+      paragraphs: [
+        'You can delete your account from Settings. Deletion starts immediately and removes your profile from BeingU. You can also contact our grievance officer if you cannot use the app.',
+      ],
+    },
+    {
+      heading: '2. What is deleted',
+      paragraphs: [
+        'Your profile, name, username, bio, photo, interests, communities you created, posts, comments, messages you sent, and saved items are deleted or made anonymous. Your phone number login is removed.',
+      ],
+    },
+    {
+      heading: '3. What we keep, and why',
+      paragraphs: [
+        'We keep only what the law requires or what is needed to protect other people: records of moderation decisions and appeals, security logs, and any information needed to respond to a legal order. [COUNSEL TO CONFIRM: each category kept, the reason, and how long.]',
+      ],
+    },
+    {
+      heading: '4. Messages in other people\'s accounts',
+      paragraphs: [
+        'Messages you sent may remain visible to the people you sent them to, shown as from a deleted account. We will not show them to anyone else. [PRODUCT TO CONFIRM when messaging is built.]',
+      ],
+    },
+    {
+      heading: '5. Timing',
+      paragraphs: [
+        'Deletion takes effect in the app straight away. Copies in backups are removed when those backups expire, within [COUNSEL TO SET BACKUP PERIOD] days.',
+      ],
+    },
+    {
+      heading: '6. Restrictions',
+      paragraphs: [
+        'If your account is under an active investigation, suspension, or legal hold, deletion may be delayed until that process is complete. You will be told if this applies.',
+      ],
+    },
+    {
+      heading: '7. Recovery',
+      paragraphs: [
+        'Deletion cannot be undone. If you sign up again with the same number, it is a new account with no data from the old one.',
+      ],
+    },
+  ],
+};
+
+export const advertisingDoc: LegalDoc = {
+  slug: 'advertising',
+  title: 'Advertising and Promotions Policy',
+  sections: [
+    {
+      heading: '1. Current status',
+      paragraphs: [
+        'BeingU does not show advertisements today. This policy applies if and when we introduce advertising, sponsored content, or paid promotions. Before that happens, we will update this policy and tell you in the app.',
+      ],
+    },
+    {
+      heading: '2. Labelling',
+      paragraphs: [
+        'Any paid or sponsored content will be clearly labelled as such, so you can tell it apart from what people share.',
+      ],
+    },
+    {
+      heading: '3. What we do not allow',
+      paragraphs: [
+        'Ads for illegal goods or services; scams or misleading claims; gambling, unless licensed and permitted by law; tobacco and alcohol to under-18s; adult content; and anything that targets people based on health, religion, caste, sexual orientation, or other sensitive attributes.',
+      ],
+    },
+    {
+      heading: '4. Targeting',
+      paragraphs: [
+        'We do not target advertising using sensitive personal data. [COUNSEL TO CONFIRM: rules for using profile interests and state for targeting, and any consent needed under the DPDP Act.]',
+      ],
+    },
+    {
+      heading: '5. Advertisers',
+      paragraphs: [
+        `Advertisers must provide accurate details. ${COMPANY} may refuse or remove any advertising at its discretion. [COUNSEL TO CONFIRM: advertiser agreement and any tax or GST requirements.]`,
+      ],
+    },
+    {
+      heading: '6. Contact',
+      paragraphs: [
+        `For questions about advertising, contact ${GRIEVANCE_EMAIL}.`,
+        `Last updated: ${LAST_UPDATED}.`,
+      ],
+    },
+  ],
+};
+
+export const LEGAL_DOCS: LegalDoc[] = [termsDoc, privacyDoc, communityDoc, moderationDoc, deletionDoc, advertisingDoc];
 
 export function findLegalDoc(slug: string): LegalDoc | undefined {
   return LEGAL_DOCS.find((d) => d.slug === slug);

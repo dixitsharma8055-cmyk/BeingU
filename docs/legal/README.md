@@ -2,7 +2,7 @@
 
 **Status: DRAFT. Not reviewed by a lawyer. Do not publish as final.**
 
-The text lives in `apps/mobile/legal/content.ts` and is shown in the app from the sign-in screen. This file lists what counsel must confirm before launch.
+The text lives in `apps/mobile/legal/content.ts` (six documents: Terms, Privacy, Community Guidelines, Content Moderation, Account Deletion, Advertising). The company details you must supply are listed in `docs/legal/information-checklist.md` and is shown in the app from the sign-in screen. This file lists what counsel must confirm before launch.
 
 ## Placeholders to fill in (launch is blocked until all are replaced)
 | Placeholder | Where | What to put |

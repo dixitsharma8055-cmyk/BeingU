@@ -10,11 +10,20 @@ const KNOWN_PLACEHOLDERS = [
   '[DATE OF PUBLICATION]',
   '[COUNSEL TO CONFIRM: list any service providers that process data outside India, and the safeguards used.]',
   '[COUNSEL TO SET RETENTION PERIODS FOR LOGS AND REPORTS.]',
+  '[COUNSEL TO SET APPEAL WINDOW]',
+  '[COUNSEL TO SET RETENTION PERIOD FOR MODERATION RECORDS.]',
+  '[COUNSEL TO CONFIRM: escalation route and reporting duties for these categories.]',
+  '[COUNSEL TO CONFIRM: the grievance and takedown timelines that apply to BeingU under the IT Rules, 2021 (as amended).]',
+  '[COUNSEL TO CONFIRM: each category kept, the reason, and how long.]',
+  '[PRODUCT TO CONFIRM when messaging is built.]',
+  '[COUNSEL TO SET BACKUP PERIOD]',
+  '[COUNSEL TO CONFIRM: rules for using profile interests and state for targeting, and any consent needed under the DPDP Act.]',
+  '[COUNSEL TO CONFIRM: advertiser agreement and any tax or GST requirements.]',
 ];
 
 describe('legal documents', () => {
   it('has the three documents the app links to', () => {
-    expect(LEGAL_DOCS.map((d) => d.slug).sort()).toEqual(['community', 'privacy', 'terms']);
+    expect(LEGAL_DOCS.map((d) => d.slug).sort()).toEqual(['advertising', 'community', 'deletion', 'moderation', 'privacy', 'terms']);
   });
 
   it('every document has sections with text', () => {
