@@ -6,14 +6,15 @@ set -u
 cd "$(dirname "$0")/../.."
 export PGHOST="${PGHOST:-localhost}" PGPORT="${PGPORT:-5432}" PGUSER="${PGUSER:-postgres}"
 DB="beingu_local_test"
+OUT="$(mktemp)"
 psql -q -v ON_ERROR_STOP=1 -d postgres -c "drop database if exists $DB;" -c "create database $DB;" || exit 1
 PSQL="psql -q -v ON_ERROR_STOP=1 -d $DB"
 for f in supabase/tests/00_local_supabase_stub.sql supabase/migrations/0001_foundation.sql supabase/seed.sql \
-         supabase/migrations/0002_interest_library.sql supabase/migrations/0003_save_my_interests.sql supabase/migrations/0004_discover.sql supabase/migrations/0005_hide_date_of_birth.sql; do
+         supabase/migrations/0002_interest_library.sql supabase/migrations/0003_save_my_interests.sql supabase/migrations/0004_discover.sql supabase/migrations/0005_hide_date_of_birth.sql supabase/migrations/0006_safety.sql; do
   $PSQL -f "$f" || { echo "BUILD FAILED at $f"; exit 1; }
 done
-for t in supabase/tests/10_rls_security.sql supabase/tests/20_save_interests.sql supabase/tests/30_interest_pages.sql supabase/tests/40_discover.sql supabase/tests/50_user_profiles.sql; do
-  $PSQL -f "$t" > /tmp/beingu_test_out.txt 2>&1
-  echo "$t: pass=$(grep -cE 'NOTICE: +PASS' /tmp/beingu_test_out.txt) fail=$(grep -cE 'NOTICE: +FAIL' /tmp/beingu_test_out.txt) errors=$(grep -c ' ERROR' /tmp/beingu_test_out.txt)"
-  grep -E 'NOTICE: +FAIL| ERROR' /tmp/beingu_test_out.txt || true
+for t in supabase/tests/10_rls_security.sql supabase/tests/20_save_interests.sql supabase/tests/30_interest_pages.sql supabase/tests/40_discover.sql supabase/tests/50_user_profiles.sql supabase/tests/60_safety.sql; do
+  $PSQL -f "$t" > "$OUT" 2>&1
+  echo "$t: pass=$(grep -cE 'NOTICE: +PASS' "$OUT") fail=$(grep -cE 'NOTICE: +FAIL' "$OUT") errors=$(grep -c ' ERROR' "$OUT")"
+  grep -E 'NOTICE: +FAIL| ERROR' "$OUT" || true
 done
