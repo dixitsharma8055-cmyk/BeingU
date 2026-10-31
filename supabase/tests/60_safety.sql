@@ -20,6 +20,10 @@ insert into public.admin_roles (user_id, role) values
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000052', false);
 select public.block_user('00000000-0000-0000-0000-000000000053');
+do $$ declare n int; declare nm text; begin
+  select count(*), max(username) into n, nm from public.list_my_blocks();
+  perform pg_temp.check('the blocked list shows the blocked person by name', n = 1 and nm = 'sf_target');
+end $$;
 do $$ declare n int; begin
   select count(*) into n from public.blocks
     where blocker_id = '00000000-0000-0000-0000-000000000052' and blocked_id = '00000000-0000-0000-0000-000000000053';

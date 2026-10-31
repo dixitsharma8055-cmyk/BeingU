@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
 import { InterestBadge } from '@/components/InterestBadge';
 import { colors, spacing } from '@/constants/theme';
 import { commonInterests, splitForProfile, type PickedInterest } from '@/lib/interestRules';
 import { fetchInterestsOf, fetchMyInterestIds, fetchPublicProfileByUsername, type PublicProfile } from '@/lib/userProfile';
+import { blockPerson } from '@/lib/safety';
 import { supabase } from '@/lib/supabase';
 
 type State =
@@ -82,6 +83,25 @@ export default function UserProfileScreen() {
 
   const open = (p: PickedInterest) => p.slug && router.push(`/interest/${p.slug}`);
 
+  // Blocking hides each person from the other straight away, so leave this screen afterwards.
+  function confirmBlock() {
+    Alert.alert(`Block @${profile.username}?`, 'You will no longer see each other in Discover or on interest pages. You can unblock them later in Blocked people.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Block',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await blockPerson(profile.id);
+            router.back();
+          } catch {
+            Alert.alert('Could not block', 'Please check your connection and try again.');
+          }
+        },
+      },
+    ]);
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Stack.Screen options={{ headerShown: true, title: `@${profile.username}`, headerTintColor: colors.ink, headerStyle: { backgroundColor: colors.background } }} />
@@ -91,6 +111,11 @@ export default function UserProfileScreen() {
         <Text style={styles.username}>@{profile.username}</Text>
         {profile.state_name ? <Text style={styles.meta}>{profile.state_name}</Text> : null}
         {profile.bio ? <Text style={styles.bio}>{profile.bio}</Text> : null}
+      </View>
+
+      <View style={styles.safety}>
+        <Button label="Report" variant="secondary" onPress={() => router.push(`/report/${profile.id}`)} />
+        <Button label="Block" variant="secondary" onPress={confirmBlock} />
       </View>
 
       {inCommon.length > 0 ? (
@@ -142,4 +167,5 @@ const styles = StyleSheet.create({
   section: { gap: spacing.sm },
   sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.ink },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  safety: { flexDirection: 'row', gap: spacing.sm },
 });

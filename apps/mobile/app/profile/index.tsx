@@ -126,6 +126,8 @@ export default function MyProfileScreen() {
       </View>
 
       <Button label="Discover people" variant="secondary" onPress={() => router.push('/discover')} />
+      <Button label="Blocked people" variant="secondary" onPress={() => router.push('/blocked')} />
+      <Button label="Notices about my account" variant="secondary" onPress={() => router.push('/notices')} />
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>

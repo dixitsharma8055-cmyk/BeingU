@@ -292,6 +292,21 @@ exception
 end;
 $$;
 
+-- Names of the people I have blocked. Their profiles are hidden from me, so this returns just what the list needs.
+create or replace function public.list_my_blocks()
+returns table (user_id uuid, username text, display_name text, blocked_at timestamptz)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select p.id, p.username, p.display_name, b.created_at
+  from public.blocks b
+  join public.profiles p on p.id = b.blocked_id
+  where b.blocker_id = (select auth.uid())
+  order by b.created_at desc;
+$$;
+
 create or replace function public.submit_appeal(p_action_id uuid, p_message text)
 returns uuid
 language plpgsql
@@ -443,8 +458,8 @@ grant execute on function public.blocked_either_way(uuid, uuid), public.account_
 revoke all on function public.block_user(uuid), public.unblock_user(uuid),
   public.submit_report(text, uuid, text, text, text), public.submit_appeal(uuid, text),
   public.admin_review_report(uuid, text, text, timestamptz), public.admin_decide_appeal(uuid, boolean),
-  public.admin_grant_role(uuid, text) from public, anon;
+  public.admin_grant_role(uuid, text), public.list_my_blocks() from public, anon;
 grant execute on function public.block_user(uuid), public.unblock_user(uuid),
   public.submit_report(text, uuid, text, text, text), public.submit_appeal(uuid, text),
   public.admin_review_report(uuid, text, text, timestamptz), public.admin_decide_appeal(uuid, boolean),
-  public.admin_grant_role(uuid, text) to authenticated;
+  public.admin_grant_role(uuid, text), public.list_my_blocks() to authenticated;

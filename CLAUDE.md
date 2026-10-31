@@ -85,6 +85,8 @@
 - [x] Database security tests (23 checks) pass on a local PostgreSQL 16 with a Supabase stub: `supabase/tests/run_local.sh`.
 - [x] Terms, Privacy Policy and Community Guidelines drafted (`apps/mobile/legal/content.ts`), shown in-app with a draft banner. NOT reviewed by counsel; see `docs/legal/README.md` for the placeholders to fill.
 - [x] Own profile screen (`apps/mobile/app/profile/`) shows interest badges, favourites first, and a 'want to learn' section. Editing interests returns to the profile.
+- [x] Blocking and reporting: database (migration 0006, 70 local checks pass), block/unblock, report form with seven categories, blocked-people list, notices with one appeal per decision. Code written; NOT run on a device; Jest tests written but NOT run (npm registry unreachable from this workspace).
+- [ ] `apps/mobile/package.json` declares no dependencies: must be added before install, typecheck or tests can run.
 - [ ] Interest badges are not tappable yet: interest pages come with discovery.
 - [ ] Other users' profiles, profile photo and city selection are not built.
 - [ ] Hindi names for interests and categories are empty (`name_hi` null); translation pending.
