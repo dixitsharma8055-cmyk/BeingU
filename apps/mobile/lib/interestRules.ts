@@ -79,3 +79,20 @@ export function toSavePayload(picks: PickedInterest[]) {
     wants_to_learn: p.wantsToLearn,
   }));
 }
+
+// Display order on a profile: favourites first, then the rest, each group sorted by name.
+export function sortForProfile(picks: PickedInterest[]): PickedInterest[] {
+  return [...picks].sort((a, b) => {
+    if (a.favorite !== b.favorite) return a.favorite ? -1 : 1;
+    return a.name.localeCompare(b.name, 'en');
+  });
+}
+
+// Splits picks into interests the person already has and interests they want to learn.
+export function splitForProfile(picks: PickedInterest[]): { has: PickedInterest[]; learning: PickedInterest[] } {
+  const sorted = sortForProfile(picks);
+  return {
+    has: sorted.filter((p) => !p.wantsToLearn),
+    learning: sorted.filter((p) => p.wantsToLearn),
+  };
+}

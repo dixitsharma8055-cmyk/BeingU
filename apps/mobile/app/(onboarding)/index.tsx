@@ -59,6 +59,7 @@ export default function OnboardingHome() {
     <View style={styles.container}>
       <Text style={styles.heading}>You're all set</Text>
       <Text style={styles.body}>Your feed and communities are the next things to build.</Text>
+      <Button label="View my profile" onPress={() => router.replace('/profile')} />
       <Button label="Back to welcome" variant="secondary" onPress={() => router.replace('/welcome')} />
     </View>
   );

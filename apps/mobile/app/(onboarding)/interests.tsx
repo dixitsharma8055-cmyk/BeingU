@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
 import { InterestChip } from '@/components/InterestChip';
 import { colors, radius, spacing } from '@/constants/theme';
@@ -30,6 +30,9 @@ const ALL = 'all';
 // Onboarding step 2: choose interests from the library, set skill levels, mark favourites and things to learn.
 // Limits: at least 3, at most 20 during onboarding, so people are not overwhelmed. More can be added later.
 export default function InterestsOnboarding() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const editing = mode === 'edit';
+  const leave = () => (editing ? router.back() : router.replace('/(onboarding)'));
   const [userId, setUserId] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [library, setLibrary] = useState<LibraryInterest[]>([]);
@@ -127,7 +130,7 @@ export default function InterestsOnboarding() {
     setSaving(true);
     try {
       await saveMyInterests(picks);
-      router.replace('/(onboarding)');
+      leave();
     } catch (e) {
       const message = e instanceof Error ? e.message : '';
       // Messages from the database are written to be shown to users (see migration 0003).
@@ -159,7 +162,7 @@ export default function InterestsOnboarding() {
   return (
     <View style={styles.flex}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>What are you into?</Text>
+        <Text style={styles.heading}>{editing ? 'Edit your interests' : 'What are you into?'}</Text>
         <Text style={styles.body}>
           Choose {MIN_INTERESTS} to {MAX_INTERESTS}. These help us find your people and your communities.
         </Text>
@@ -287,8 +290,8 @@ export default function InterestsOnboarding() {
 
       <View style={styles.footer}>
         <Button label="Save and continue" onPress={save} disabled={!canContinue(picks.length) || saving} loading={saving} />
-        <Pressable accessibilityRole="button" accessibilityLabel="Finish later" onPress={() => router.replace('/(onboarding)')}>
-          <Text style={styles.skip}>Finish later</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel={editing ? 'Cancel' : 'Finish later'} onPress={leave}>
+          <Text style={styles.skip}>{editing ? 'Cancel' : 'Finish later'}</Text>
         </Pressable>
       </View>
     </View>

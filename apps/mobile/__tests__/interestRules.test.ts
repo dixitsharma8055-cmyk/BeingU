@@ -1,5 +1,7 @@
 import {
   canContinue,
+  sortForProfile,
+  splitForProfile,
   customSlug,
   matchesQuery,
   normalizeQuery,
@@ -69,5 +71,20 @@ describe('save payload', () => {
       { interest_id: 'a', skill_level: 'advanced', is_favorite: true, wants_to_learn: false },
       { interest_id: 'b', skill_level: 'beginner', is_favorite: false, wants_to_learn: true },
     ]);
+  });
+});
+
+describe('profile display', () => {
+  const pick = (name: string, extra: Partial<{ favorite: boolean; wantsToLearn: boolean }> = {}) => ({
+    id: name, name, skill: 'beginner' as const, favorite: false, wantsToLearn: false, ...extra,
+  });
+  it('puts favourites first, then by name', () => {
+    const order = sortForProfile([pick('Yoga'), pick('Chess', { favorite: true }), pick('Art')]).map((p) => p.name);
+    expect(order).toEqual(['Chess', 'Art', 'Yoga']);
+  });
+  it('separates what the person has from what they want to learn', () => {
+    const { has, learning } = splitForProfile([pick('Guitar'), pick('Chess', { wantsToLearn: true })]);
+    expect(has.map((p) => p.name)).toEqual(['Guitar']);
+    expect(learning.map((p) => p.name)).toEqual(['Chess']);
   });
 });
