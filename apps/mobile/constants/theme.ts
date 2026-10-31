@@ -11,6 +11,7 @@ export const colors = {
   pink: '#F07095', // logo "U" upper stroke
   orange: '#FEAB65', // logo "U" top-right stroke and dot
   white: '#FFFFFF',
+  highlightSoft: '#FFF1D6', // derived pale tint for notices (not sampled from the logo)
 } as const;
 
 export const gradients = {

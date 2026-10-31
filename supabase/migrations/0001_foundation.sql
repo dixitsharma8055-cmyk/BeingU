@@ -141,7 +141,7 @@ create policy "reference: categories readable by signed-in users"
   on public.interest_categories for select to authenticated using (true);
 create policy "reference: approved interests readable by signed-in users"
   on public.interests for select to authenticated using (is_approved or created_by = (select auth.uid()));
-create policy "interests: signed-in users may suggest a new interest (unapproved)"
+create policy "interests: suggest unapproved interest"
   on public.interests for insert to authenticated
   with check (is_approved = false and created_by = (select auth.uid()));
 
