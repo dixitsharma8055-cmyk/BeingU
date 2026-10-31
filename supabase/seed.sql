@@ -1,0 +1,42 @@
+-- BeingU seed: all 28 Indian states and 8 union territories (36 total).
+-- Safe to re-run: uses ON CONFLICT DO NOTHING.
+-- Cities and towns are NOT seeded here; they are imported from an official or licensed list in a later step.
+
+insert into public.states_uts (name, kind) values
+  ('Andhra Pradesh', 'state'),
+  ('Arunachal Pradesh', 'state'),
+  ('Assam', 'state'),
+  ('Bihar', 'state'),
+  ('Chhattisgarh', 'state'),
+  ('Goa', 'state'),
+  ('Gujarat', 'state'),
+  ('Haryana', 'state'),
+  ('Himachal Pradesh', 'state'),
+  ('Jharkhand', 'state'),
+  ('Karnataka', 'state'),
+  ('Kerala', 'state'),
+  ('Madhya Pradesh', 'state'),
+  ('Maharashtra', 'state'),
+  ('Manipur', 'state'),
+  ('Meghalaya', 'state'),
+  ('Mizoram', 'state'),
+  ('Nagaland', 'state'),
+  ('Odisha', 'state'),
+  ('Punjab', 'state'),
+  ('Rajasthan', 'state'),
+  ('Sikkim', 'state'),
+  ('Tamil Nadu', 'state'),
+  ('Telangana', 'state'),
+  ('Tripura', 'state'),
+  ('Uttar Pradesh', 'state'),
+  ('Uttarakhand', 'state'),
+  ('West Bengal', 'state'),
+  ('Andaman and Nicobar Islands', 'union_territory'),
+  ('Chandigarh', 'union_territory'),
+  ('Dadra and Nagar Haveli and Daman and Diu', 'union_territory'),
+  ('Delhi (National Capital Territory)', 'union_territory'),
+  ('Jammu and Kashmir', 'union_territory'),
+  ('Ladakh', 'union_territory'),
+  ('Lakshadweep', 'union_territory'),
+  ('Puducherry', 'union_territory')
+on conflict (name) do nothing;
