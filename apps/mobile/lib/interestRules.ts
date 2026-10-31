@@ -97,3 +97,14 @@ export function splitForProfile(picks: PickedInterest[]): { has: PickedInterest[
     learning: sorted.filter((p) => p.wantsToLearn),
   };
 }
+
+// Plain-language reason shown on a Discover card, e.g. "Shares 2 interests: Chess, Guitar".
+// Lists up to three names, then "and N more". It never claims personality or compatibility.
+export function sharedLabel(names: string[]): string {
+  const n = names.length;
+  if (n === 0) return '';
+  const word = n === 1 ? 'interest' : 'interests';
+  const shown = names.slice(0, 3).join(', ');
+  const more = n > 3 ? ` and ${n - 3} more` : '';
+  return `Shares ${n} ${word}: ${shown}${more}`;
+}

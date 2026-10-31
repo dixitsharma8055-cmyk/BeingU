@@ -1,5 +1,6 @@
 import {
   canContinue,
+  sharedLabel,
   sortForProfile,
   splitForProfile,
   customSlug,
@@ -86,5 +87,14 @@ describe('profile display', () => {
     const { has, learning } = splitForProfile([pick('Guitar'), pick('Chess', { wantsToLearn: true })]);
     expect(has.map((p) => p.name)).toEqual(['Guitar']);
     expect(learning.map((p) => p.name)).toEqual(['Chess']);
+  });
+});
+
+describe('shared interest label', () => {
+  it('names what is shared, without making personality claims', () => {
+    expect(sharedLabel(['Chess'])).toBe('Shares 1 interest: Chess');
+    expect(sharedLabel(['Chess', 'Guitar'])).toBe('Shares 2 interests: Chess, Guitar');
+    expect(sharedLabel(['A', 'B', 'C', 'D', 'E'])).toBe('Shares 5 interests: A, B, C and 2 more');
+    expect(sharedLabel([])).toBe('');
   });
 });

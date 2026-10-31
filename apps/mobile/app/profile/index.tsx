@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Button } from '@/components/Button';
 import { InterestBadge } from '@/components/InterestBadge';
@@ -7,6 +7,7 @@ import { colors, spacing } from '@/constants/theme';
 import { splitForProfile, type PickedInterest } from '@/lib/interestRules';
 import { fetchMyInterests } from '@/lib/interests';
 import { fetchMyProfile, type MyProfile } from '@/lib/profileData';
+import { setMyVisibility } from '@/lib/discover';
 import { supabase } from '@/lib/supabase';
 
 type State =
@@ -74,6 +75,33 @@ export default function MyProfileScreen() {
   }
 
   const { has, learning } = splitForProfile(picks);
+  const isPublic = profile.profile_visibility === 'public';
+
+  // Going public is a clear choice: say exactly what others will see first.
+  function changeVisibility(next: boolean) {
+    const apply = async () => {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) return;
+        await setMyVisibility(userData.user.id, next ? 'public' : 'private');
+        load();
+      } catch {
+        Alert.alert('Could not change your profile', 'Please check your connection and try again.');
+      }
+    };
+    if (!next) {
+      apply();
+      return;
+    }
+    Alert.alert(
+      'Make your profile public?',
+      'Anyone using BeingU will be able to see your name, username, state, bio and interests, and find you in Discover and on interest pages. Your date of birth, phone number and exact location are never shown.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Make public', onPress: apply },
+      ],
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -83,6 +111,21 @@ export default function MyProfileScreen() {
         {profile.state_name ? <Text style={styles.meta}>{profile.state_name}</Text> : null}
         {profile.bio ? <Text style={styles.bio}>{profile.bio}</Text> : null}
       </View>
+
+      <View style={styles.visibility}>
+        <View style={styles.visibilityText}>
+          <Text style={styles.sectionTitle}>Public profile</Text>
+          <Text style={styles.meta}>{isPublic ? 'Visible in Discover and on interest pages.' : 'Only you can see your profile.'}</Text>
+        </View>
+        <Switch
+          accessibilityLabel="Public profile"
+          value={isPublic}
+          onValueChange={changeVisibility}
+          trackColor={{ false: colors.inkMuted, true: colors.purple }}
+        />
+      </View>
+
+      <Button label="Discover people" variant="secondary" onPress={() => router.push('/discover')} />
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -134,4 +177,6 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.ink },
   edit: { fontSize: 15, color: colors.purple, fontWeight: '700' },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  visibility: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
+  visibilityText: { flex: 1, gap: 2 },
 });
