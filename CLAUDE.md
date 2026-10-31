@@ -73,8 +73,12 @@
 - [x] Foundation migration with RLS (`supabase/migrations/0001_foundation.sql`), NOT applied.
 - [x] Seed: 28 states and 8 union territories (`supabase/seed.sql`), NOT applied.
 - [ ] Install dependencies and run TypeScript check (blocked: npm registry unreachable from this workspace).
-- [ ] Automated tests for env validation and the 18+ rule.
-- [ ] Phone (+91) sign-up and log-in with OTP.
+- [x] Phone (+91) sign-up/log-in with one-time code: phone entry, code entry, 18+ and terms consent (`apps/mobile/app/(auth)/`). Code written; NOT yet run on a device or against Supabase.
+- [x] Phone and age logic checked offline (19 checks passing, using a stand-in for zod). Jest test file written in `apps/mobile/__tests__/` but NOT run.
+- [ ] Install dependencies, run `npm test` and `npm run typecheck`.
+- [ ] Supabase phone provider with an SMS provider configured (costs money; founder approval needed).
+- [ ] DLT registration for OTP SMS in India (required by TRAI for SMS to Indian numbers).
+- [ ] Terms, Privacy Policy and Community Guidelines documents (checkboxes currently link to nothing).
 - [ ] Onboarding, profile, interest library.
 - [ ] City list import.
 - [ ] Hindi translations.
