@@ -108,3 +108,9 @@ export function sharedLabel(names: string[]): string {
   const more = n > 3 ? ` and ${n - 3} more` : '';
   return `Shares ${n} ${word}: ${shown}${more}`;
 }
+
+// Ids of the other person's interests that also appear in mine. Order follows theirs.
+export function commonInterests(mineIds: string[], theirs: PickedInterest[]): string[] {
+  const mine = new Set(mineIds);
+  return theirs.filter((t) => mine.has(t.id)).map((t) => t.id);
+}

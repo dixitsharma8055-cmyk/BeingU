@@ -100,18 +100,19 @@ export default function InterestScreen() {
         ) : (
           <>
             {people.map((p) => (
-              <View
+              <Pressable
                 key={p.id}
-                accessible
-                accessibilityLabel={`${p.display_name}, @${p.username}${p.state_name ? `, ${p.state_name}` : ''}`}
-                style={styles.person}
+                accessibilityRole="button"
+                accessibilityLabel={`${p.display_name}, @${p.username}${p.state_name ? `, ${p.state_name}` : ''}. Open profile`}
+                onPress={() => router.push(`/user/${p.username}`)}
+                style={({ pressed }) => [styles.person, pressed && { opacity: 0.85 }]}
               >
                 <Text style={styles.personName}>{p.display_name}</Text>
                 <Text style={styles.personMeta}>
                   @{p.username}
                   {p.state_name ? ` · ${p.state_name}` : ''}
                 </Text>
-              </View>
+              </Pressable>
             ))}
             {people.length >= PEOPLE_PAGE_SIZE ? (
               <Text style={styles.hint}>Showing the first {PEOPLE_PAGE_SIZE} people.</Text>

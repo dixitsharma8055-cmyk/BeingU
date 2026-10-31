@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Button } from '@/components/Button';
 import { colors, radius, spacing } from '@/constants/theme';
@@ -55,11 +56,12 @@ export default function DiscoverScreen() {
             </View>
           ) : (
             state.people.map((p) => (
-              <View
+              <Pressable
                 key={p.userId}
-                accessible
-                accessibilityLabel={`${p.displayName}, @${p.username}. ${sharedLabel(p.sharedNames)}`}
-                style={styles.card}
+                accessibilityRole="button"
+                accessibilityLabel={`${p.displayName}, @${p.username}. ${sharedLabel(p.sharedNames)}. Open profile`}
+                onPress={() => router.push(`/user/${p.username}`)}
+                style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
               >
                 <Text style={styles.name}>{p.displayName}</Text>
                 <Text style={styles.meta}>
@@ -67,7 +69,7 @@ export default function DiscoverScreen() {
                   {p.stateName ? ` · ${p.stateName}` : ''}
                 </Text>
                 <Text style={styles.shared}>{sharedLabel(p.sharedNames)}</Text>
-              </View>
+              </Pressable>
             ))
           )}
         </ScrollView>
