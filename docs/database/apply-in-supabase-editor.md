@@ -2,7 +2,7 @@
 
 Status: PREPARED, NOT APPLIED. Do not start until the founder has reviewed every file and explicitly approved execution.
 
-Project: Mumbai (ap-south-1), project reference `valawiylhhxopubbkckz`.
+Project: Mumbai (ap-south-1), project reference `qxvcdlcfsvqxffzstmwm`.
 Never paste a database password, connection string or service-role key into the SQL Editor's chat, the repository or this document.
 
 ## Which files, in which order
