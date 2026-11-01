@@ -42,11 +42,11 @@ Expected on an empty project: three blank results (null). If any shows a name, s
 ## How to run each step
 
 1. Open the file on GitHub (branch `feature/safety-blocking-reporting`), copy its full contents.
-2. In the SQL Editor, open a new query. Paste the contents.
+2. In the SQL Editor, open a new query. Type `begin;` on the first line, paste the file's contents below it, then type `commit;` on the last line. The whole step then runs as one transaction: either all of it applies, or none of it does. This is the same wrapper the local rehearsal used.
 3. Run it once. Read the result message. Send me any error text, copied exactly.
 4. Do not run the next step until the current one has finished without error.
 
-If a step fails, the editor may leave the transaction open. Run `rollback;` before anything else, then send me the error.
+If a step fails, run `rollback;` in a new query before anything else. That undoes the failed step. Then send me the error text.
 
 ## Checks after each step
 
